@@ -10,6 +10,9 @@ uses
   BCEditor.Editor.CompletionProposal;
 
 type
+  TBCEditorCompletionProposalPopupWindowSelectedEvent = procedure(Sender: TObject; var ASelectedItem: string) of object;
+  TBCEditorCompletionProposalPopupWindowValidateEvent = procedure(ASender: TObject; Shift: TShiftState; EndToken: Char) of object;
+
   TBCEditorCompletionProposalPopupWindow = class(TBCEditorPopupWindow)
   strict private
     FAdjustCompletionStart: Boolean;
@@ -24,8 +27,8 @@ type
     FItems: TStrings;
     FMargin: Integer;
     FOnCanceled: TNotifyEvent;
-    FOnSelected: TSelectedEvent;
-    FOnValidate: TValidateEvent;
+    FOnSelected: TBCEditorCompletionProposalPopupWindowSelectedEvent;
+    FOnValidate: TBCEditorCompletionProposalPopupWindowValidateEvent;
     FSelectedLine: Integer;
     FSendToEditor: Boolean;
     FTitleHeight: Integer;
@@ -33,7 +36,7 @@ type
     FTopLine: Integer;
     FValueSet: Boolean;
     function GetItemHeight: Integer;
-    function GetItems: TCompletionItems;
+    function GetItems: TBCEditorCompletionProposalItems;
     function GetTitleHeight: Integer;
     function GetVisibleLines: Integer;
     procedure HandleDblClick(ASender: TObject);
@@ -54,14 +57,14 @@ type
     destructor Destroy; override;
     procedure Assign(ASource: TPersistent); override;
     procedure Execute(const ACurrentString: string; const APoint: TPoint);
-    function GetCurrentInput: string;
+    function GetCurrentInput(): string;
     procedure MouseWheel(AShift: TShiftState; AWheelDelta: Integer; AMousePos: TPoint);
     procedure WndProc(var Msg: TMessage); override;
     property CurrentString: string read FCurrentString write SetCurrentString;
-    property Items: TCompletionItems read GetItems;
+    property Items: TBCEditorCompletionProposalItems read GetItems;
     property TopLine: Integer read FTopLine write SetTopLine;
     property OnCanceled: TNotifyEvent read FOnCanceled write FOnCanceled;
-    property OnSelected: TSelectedEvent read FOnSelected write FOnSelected;
+    property OnSelected: TBCEditorCompletionProposalPopupWindowSelectedEvent read FOnSelected write FOnSelected;
   end;
 
 implementation {***************************************************************}
@@ -169,9 +172,9 @@ var
     LAutoWidthCount: Integer;
     LColumnIndex: Integer;
     LIndex: Integer;
-    LItems: TCompletionItems;
+    LItems: TBCEditorCompletionProposalItems;
     LMaxWidth: Integer;
-    LProposalColumn: TBCEditorCompletionProposal.TColumns.TColumn;
+    LProposalColumn: TBCEditorCompletionProposalColumns.TColumn;
     LTempWidth: Integer;
     LVisibleColumnCount: Integer;
     LWidthSum: Integer;
@@ -225,7 +228,7 @@ var
 
   function GetTitleVisible: Boolean;
   var
-    LColumn: TBCEditorCompletionProposal.TColumns.TColumn;
+    LColumn: TBCEditorCompletionProposalColumns.TColumn;
     LColumnIndex: Integer;
   begin
     Result := False;
@@ -274,7 +277,7 @@ begin
   end;
 end;
 
-function TBCEditorCompletionProposalPopupWindow.GetCurrentInput: string;
+function TBCEditorCompletionProposalPopupWindow.GetCurrentInput(): string;
 var
   LChar: Integer;
   LLineText: string;
@@ -284,12 +287,12 @@ begin
 
   LTextCaretPosition := TextPosition(TCustomBCEditor(Editor).CaretPos);
 
-  LLineText := TCustomBCEditor(Editor).Lines[LTextCaretPosition.Line];
+  LLineText := TCustomBCEditor(Editor).Lines[Min(LTextCaretPosition.Line, TCustomBCEditor(Editor).Lines.Count - 1)];
   LChar := LTextCaretPosition.Char;
-  if LChar < Length(LLineText) then
+  if (LChar <= Length(LLineText)) then
   begin
     FAdjustCompletionStart := False;
-    while (LChar >= 0) and (LLineText[1 + LChar] > BCEDITOR_SPACE_CHAR) and not TCustomBCEditor(Editor).IsWordBreakChar(LLineText[1 + LChar]) do
+    while ((LChar > 0) and not TCustomBCEditor(Editor).IsWordBreakChar(LLineText[1 + LChar - 1])) do
       Dec(LChar);
 
     FCompletionStartChar := LChar;
@@ -304,7 +307,7 @@ end;
 
 function TBCEditorCompletionProposalPopupWindow.GetItemHeight: Integer;
 var
-  LColumn: TBCEditorCompletionProposal.TColumns.TColumn;
+  LColumn: TBCEditorCompletionProposalColumns.TColumn;
   LColumnIndex: Integer;
   LHeight: Integer;
 begin
@@ -319,7 +322,7 @@ begin
   end;
 end;
 
-function TBCEditorCompletionProposalPopupWindow.GetItems: TCompletionItems;
+function TBCEditorCompletionProposalPopupWindow.GetItems: TBCEditorCompletionProposalItems;
 begin
   Result := nil;
   if FCompletionProposal.CompletionColumnIndex <  FCompletionProposal.Columns.Count then
@@ -328,7 +331,7 @@ end;
 
 function TBCEditorCompletionProposalPopupWindow.GetTitleHeight: Integer;
 var
-  LColumn: TBCEditorCompletionProposal.TColumns.TColumn;
+  LColumn: TBCEditorCompletionProposalColumns.TColumn;
   LColumnIndex: Integer;
   LHeight: Integer;
 begin
@@ -585,7 +588,7 @@ end;
 
 procedure TBCEditorCompletionProposalPopupWindow.Paint;
 var
-  LColumn: TBCEditorCompletionProposal.TColumns.TColumn;
+  LColumn: TBCEditorCompletionProposalColumns.TColumn;
   LColumnIndex: Integer;
   LColumnWidth: Integer;
   LIndex: Integer;

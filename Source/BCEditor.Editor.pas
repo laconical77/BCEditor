@@ -182,12 +182,12 @@ type
     FOnAfterLinePaint: TBCEditorLinePaintEvent;
     FOnAfterMarkPanelPaint: TBCEditorMarkPanelPaintEvent;
     FOnAfterMarkPlaced: TNotifyEvent;
-    FOnBeforeCompletionProposalExecute: TCompletionEvent;
+    FOnBeforeCompletionProposalExecute: TBCEditorCompletionProposalEvent;
     FOnBeforeDeleteMark: TBCEditorMarkEvent;
     FOnBeforeMarkPanelPaint: TBCEditorMarkPanelPaintEvent;
     FOnBeforeMarkPlaced: TBCEditorMarkEvent;
     FOnBeforeTokenInfoExecute: TBCEditorTokenInfoEvent;
-    FOnCaretChanged: TCaretChangedEvent;
+    FOnCaretChanged: TBCEditorCaretChangedEvent;
     FOnChainCaretMoved: TNotifyEvent;
     FOnChainLinesCleared: TNotifyEvent;
     FOnChainLinesDeleted: TBCEditorLines.TChangeEvent;
@@ -196,14 +196,14 @@ type
     FOnChange: TNotifyEvent;
     FOnCommandProcessed: TBCEditorProcessCommandEvent;
     FOnCompletionProposalCanceled: TNotifyEvent;
-    FOnCompletionProposalSelected: TSelectedEvent;
+    FOnCompletionProposalSelected: TBCEditorCompletionProposalPopupWindowSelectedEvent;
     FOnContextHelp: TBCEditorContextHelpEvent;
     FOnCreateFileStream: TBCEditorCreateFileStreamEvent;
     FOnCustomLineColors: TBCEditorCustomLineColorsEvent;
     FOnCustomTokenAttribute: TBCEditorCustomTokenAttributeEvent;
     FOnDropFiles: TBCEditorDropFilesEvent;
     FOnKeyPressW: TBCEditorKeyPressWEvent;
-    FOnLeftMarginClick: TMarginClickEvent;
+    FOnLeftMarginClick: TBCEditorMarginClickEvent;
     FOnMarkPanelLinePaint: TBCEditorMarkPanelLinePaintEvent;
     FOnModified: TNotifyEvent;
     FOnPaint: TBCEditorPaintEvent;
@@ -211,7 +211,7 @@ type
     FOnProcessUserCommand: TBCEditorProcessCommandEvent;
     FOnReplaceText: TReplaceEvent;
     FOnRightMarginMouseUp: TNotifyEvent;
-    FOnScroll: TScrollEvent;
+    FOnScroll: TBCEditorScrollEvent;
     FOnSelectionChanged: TNotifyEvent;
     FOptions: TBCEditorOptions;
     FOriginalLines: TBCEditorLines;
@@ -361,7 +361,7 @@ type
     function GetSelText(): string;
     function GetText: string;
     function GetTextBetween(ATextBeginPosition, ATextEndPosition: TBCEditorTextPosition): string;
-    function GetUndoOptions(): TUndoOptions;
+    function GetUndoOptions(): TBCEditorUndoOptions;
     function GetVisibleChars(const ARow: Integer; const ALineText: string = ''): Integer;
     function GetWordAt(ATextPos: TPoint): string; inline;
     function GetWordAtTextPosition(const ATextPosition: TBCEditorTextPosition): string;
@@ -433,7 +433,7 @@ type
     procedure SetTextEntryMode(const AValue: TBCEditorTextEntryMode);
     procedure SetTokenInfo(const AValue: TBCEditorTokenInfo);
     procedure SetTopRow(const AValue: Integer);
-    procedure SetUndoOptions(AOptions: TUndoOptions);
+    procedure SetUndoOptions(AOptions: TBCEditorUndoOptions);
     procedure SetWordBlock(const ATextPosition: TBCEditorTextPosition);
     procedure SetWordWrap(const AValue: TBCEditorWordWrap);
     function ShortCutPressed: Boolean;
@@ -611,23 +611,23 @@ type
     property OnAfterLinePaint: TBCEditorLinePaintEvent read FOnAfterLinePaint write FOnAfterLinePaint;
     property OnAfterMarkPanelPaint: TBCEditorMarkPanelPaintEvent read FOnAfterMarkPanelPaint write FOnAfterMarkPanelPaint;
     property OnAfterMarkPlaced: TNotifyEvent read FOnAfterMarkPlaced write FOnAfterMarkPlaced;
-    property OnBeforeCompletionProposalExecute: TCompletionEvent read FOnBeforeCompletionProposalExecute write FOnBeforeCompletionProposalExecute;
+    property OnBeforeCompletionProposalExecute: TBCEditorCompletionProposalEvent read FOnBeforeCompletionProposalExecute write FOnBeforeCompletionProposalExecute;
     property OnBeforeDeleteMark: TBCEditorMarkEvent read FOnBeforeDeleteMark write FOnBeforeDeleteMark;
     property OnBeforeMarkPanelPaint: TBCEditorMarkPanelPaintEvent read FOnBeforeMarkPanelPaint write FOnBeforeMarkPanelPaint;
     property OnBeforeMarkPlaced: TBCEditorMarkEvent read FOnBeforeMarkPlaced write FOnBeforeMarkPlaced;
     property OnBeforeTokenInfoExecute: TBCEditorTokenInfoEvent read FOnBeforeTokenInfoExecute write FOnBeforeTokenInfoExecute;
-    property OnCaretChanged: TCaretChangedEvent read FOnCaretChanged write FOnCaretChanged;
+    property OnCaretChanged: TBCEditorCaretChangedEvent read FOnCaretChanged write FOnCaretChanged;
     property OnChange: TNotifyEvent read FOnChange write FOnChange;
     property OnCommandProcessed: TBCEditorProcessCommandEvent read FOnCommandProcessed write FOnCommandProcessed;
     property OnCompletionProposalCanceled: TNotifyEvent read FOnCompletionProposalCanceled write FOnCompletionProposalCanceled;
-    property OnCompletionProposalSelected: TSelectedEvent read FOnCompletionProposalSelected write FOnCompletionProposalSelected;
+    property OnCompletionProposalSelected: TBCEditorCompletionProposalPopupWindowSelectedEvent read FOnCompletionProposalSelected write FOnCompletionProposalSelected;
     property OnContextHelp: TBCEditorContextHelpEvent read FOnContextHelp write FOnContextHelp;
     property OnCreateFileStream: TBCEditorCreateFileStreamEvent read FOnCreateFileStream write FOnCreateFileStream;
     property OnCustomLineColors: TBCEditorCustomLineColorsEvent read FOnCustomLineColors write FOnCustomLineColors;
     property OnCustomTokenAttribute: TBCEditorCustomTokenAttributeEvent read FOnCustomTokenAttribute write FOnCustomTokenAttribute;
     property OnDropFiles: TBCEditorDropFilesEvent read FOnDropFiles write FOnDropFiles;
     property OnKeyPress: TBCEditorKeyPressWEvent read FOnKeyPressW write FOnKeyPressW;
-    property OnLeftMarginClick: TMarginClickEvent read FOnLeftMarginClick write FOnLeftMarginClick;
+    property OnLeftMarginClick: TBCEditorMarginClickEvent read FOnLeftMarginClick write FOnLeftMarginClick;
     property OnMarkPanelLinePaint: TBCEditorMarkPanelLinePaintEvent read FOnMarkPanelLinePaint write FOnMarkPanelLinePaint;
     property OnModified: TNotifyEvent read FOnModified write FOnModified;
     property OnPaint: TBCEditorPaintEvent read FOnPaint write FOnPaint;
@@ -635,13 +635,13 @@ type
     property OnProcessUserCommand: TBCEditorProcessCommandEvent read FOnProcessUserCommand write FOnProcessUserCommand;
     property OnReplaceText: TReplaceEvent read FOnReplaceText write FOnReplaceText;
     property OnRightMarginMouseUp: TNotifyEvent read FOnRightMarginMouseUp write FOnRightMarginMouseUp;
-    property OnScroll: TScrollEvent read FOnScroll write FOnScroll;
+    property OnScroll: TBCEditorScrollEvent read FOnScroll write FOnScroll;
     property OnSelectionChanged: TNotifyEvent read FOnSelectionChanged write FOnSelectionChanged;
     property Options: TBCEditorOptions read FOptions write SetOptions default DefaultOptions;
     property Rows: TRows read GetRows;
     property TextWidth: Integer read FTextWidth;
     property TopRow: Integer read FTopRow write SetTopRow;
-    property UndoOptions: TUndoOptions read GetUndoOptions write SetUndoOptions default DefaultUndoOptions;
+    property UndoOptions: TBCEditorUndoOptions read GetUndoOptions write SetUndoOptions default DefaultUndoOptions;
     property VisibleRows: Integer read FVisibleRows;
     property WordWrap: TBCEditorWordWrap read FWordWrap write SetWordWrap;
   public
@@ -3127,64 +3127,61 @@ var
   LControl: TWinControl;
   LCurrentInput: string;
   LIndex: Integer;
-  LItem: TCompletionItems.TItem;
+  LItem: TBCEditorCompletionProposalItems.TItem;
   LItems: TStrings;
   LPoint: TPoint;
 begin
   Assert(FCompletionProposal.CompletionColumnIndex < FCompletionProposal.Columns.Count);
 
-  if (Lines.CaretPosition.Line < Lines.Count) then
+  LPoint := ClientToScreen(DisplayToClient(DisplayCaretPosition));
+  Inc(LPoint.Y, LineHeight);
+
+  FCompletionProposalPopupWindow := TBCEditorCompletionProposalPopupWindow.Create(Self);
+  with FCompletionProposalPopupWindow do
   begin
-    LPoint := ClientToScreen(DisplayToClient(DisplayCaretPosition));
-    Inc(LPoint.Y, LineHeight);
+    LControl := Self;
+    while Assigned(LControl) and not (LControl is TCustomForm) do
+      LControl := LControl.Parent;
+    if LControl is TCustomForm then
+      PopupParent := TCustomForm(LControl);
+    OnCanceled := FOnCompletionProposalCanceled;
+    OnSelected := FOnCompletionProposalSelected;
+    Assign(FCompletionProposal);
 
-    FCompletionProposalPopupWindow := TBCEditorCompletionProposalPopupWindow.Create(Self);
-    with FCompletionProposalPopupWindow do
+    LItems := TStringList.Create;
+    try
+      if cpoParseItemsFromText in FCompletionProposal.Options then
+        SplitTextIntoWords(LItems, False);
+      if cpoAddHighlighterKeywords in FCompletionProposal.Options then
+        AddHighlighterKeywords(LItems);
+      Items.Clear;
+      for LIndex := 0 to LItems.Count - 1 do
+      begin
+        LItem := Items.Add;
+        LItem.Value := LItems[LIndex];
+        { Add empty items for columns }
+        for LColumnIndex := 1 to FCompletionProposal.Columns.Count - 1 do
+          FCompletionProposal.Columns[LColumnIndex].Items.Add;
+      end;
+    finally
+      LItems.Free;
+    end;
+
+    LCurrentInput := GetCurrentInput();
+    LCanExecute := True;
+    if Assigned(FOnBeforeCompletionProposalExecute) then
+      FOnBeforeCompletionProposalExecute(Self, FCompletionProposal.Columns,
+        LCurrentInput, LCanExecute);
+    if LCanExecute then
     begin
-      LControl := Self;
-      while Assigned(LControl) and not (LControl is TCustomForm) do
-        LControl := LControl.Parent;
-      if LControl is TCustomForm then
-        PopupParent := TCustomForm(LControl);
-      OnCanceled := FOnCompletionProposalCanceled;
-      OnSelected := FOnCompletionProposalSelected;
-      Assign(FCompletionProposal);
-
-      LItems := TStringList.Create;
-      try
-        if cpoParseItemsFromText in FCompletionProposal.Options then
-          SplitTextIntoWords(LItems, False);
-        if cpoAddHighlighterKeywords in FCompletionProposal.Options then
-          AddHighlighterKeywords(LItems);
-        Items.Clear;
-        for LIndex := 0 to LItems.Count - 1 do
-        begin
-          LItem := Items.Add;
-          LItem.Value := LItems[LIndex];
-          { Add empty items for columns }
-          for LColumnIndex := 1 to FCompletionProposal.Columns.Count - 1 do
-            FCompletionProposal.Columns[LColumnIndex].Items.Add;
-        end;
-      finally
-        LItems.Free;
-      end;
-
-      LCurrentInput := GetCurrentInput;
-      LCanExecute := True;
-      if Assigned(FOnBeforeCompletionProposalExecute) then
-        FOnBeforeCompletionProposalExecute(Self, FCompletionProposal.Columns,
-          LCurrentInput, LCanExecute);
-      if LCanExecute then
-      begin
-        FAlwaysShowCaretBeforePopup := AlwaysShowCaret;
-        AlwaysShowCaret := True;
-        Execute(LCurrentInput, LPoint)
-      end
-      else
-      begin
-        FCompletionProposalPopupWindow.Free;
-        FCompletionProposalPopupWindow := nil;
-      end;
+      FAlwaysShowCaretBeforePopup := AlwaysShowCaret;
+      AlwaysShowCaret := True;
+      Execute(LCurrentInput, LPoint)
+    end
+    else
+    begin
+      FCompletionProposalPopupWindow.Free;
+      FCompletionProposalPopupWindow := nil;
     end;
   end;
 end;
@@ -5992,7 +5989,7 @@ begin
   Result := True;
 end;
 
-function TCustomBCEditor.GetUndoOptions(): TUndoOptions;
+function TCustomBCEditor.GetUndoOptions(): TBCEditorUndoOptions;
 begin
   Result := [];
   if (loUndoGrouped in Lines.Options) then
@@ -7382,7 +7379,7 @@ begin
     ComputeScroll(FOldMouseMovePoint);
     LDisplayPosition := ClientToDisplay(X, Y);
     if (not (soPastEndOfFile in Scroll.Options)) then
-      LDisplayPosition.Row := Max(LDisplayPosition.Row, Rows.Count - 1);
+      LDisplayPosition.Row := Min(LDisplayPosition.Row, Rows.Count - 1);
     if FScrollDeltaX <> 0 then
       LDisplayPosition.Column := DisplayCaretPosition.Column;
     if FScrollDeltaY <> 0 then
@@ -10253,25 +10250,26 @@ end;
 
 function TCustomBCEditor.RescanHighlighterRangesFrom(const ALine: Integer): Integer;
 var
-  LCurrentRange: TBCEditorHighlighter.TRange;
+  LRange: TBCEditorHighlighter.TRange;
 begin
   Assert(ALine < Lines.Count);
 
   if (ALine = 0) then
-    FHighlighter.ResetCurrentRange
+    FHighlighter.ResetCurrentRange()
   else
     FHighlighter.SetCurrentRange(Lines.Lines[ALine - 1].Range);
 
   Result := ALine;
   repeat
     FHighlighter.SetCurrentLine(Lines.Lines[Result].Text);
-    FHighlighter.NextToEndOfLine;
-    LCurrentRange := FHighlighter.GetCurrentRange;
-    if (Lines.Lines[Result].Range = LCurrentRange) then
-      Exit;
-    Lines.SetRange(Result, LCurrentRange);
+    FHighlighter.NextToEndOfLine();
+    LRange := FHighlighter.GetCurrentRange();
+    if (Lines.Lines[Result].Range = LRange) then
+      exit;
+    Lines.SetRange(Result, LRange);
     Inc(Result);
-  until Result = Lines.Count;
+  until (Result = Lines.Count);
+
   Dec(Result);
 end;
 
@@ -11705,7 +11703,7 @@ begin
   end;
 end;
 
-procedure TCustomBCEditor.SetUndoOptions(AOptions: TUndoOptions);
+procedure TCustomBCEditor.SetUndoOptions(AOptions: TBCEditorUndoOptions);
 var
   LLinesOptions: TBCEditorLines.TOptions;
 begin

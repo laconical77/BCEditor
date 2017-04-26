@@ -1315,7 +1315,6 @@ begin
     LParser := SymbolList[LAnsiChar];
     if Assigned(LParser) and (LParser <> FDefaultTermSymbol) and (LParser <> FDefaultSymbols) then
       LParser.Free;
-    LParser := nil;
   end;
 
   FDefaultToken.Free;
@@ -1689,7 +1688,7 @@ begin
     Result := btUnspecified;
 end;
 
-function StrToRegionType(const AString: string): TItemType;
+function StrToRegionType(const AString: string): TBCEditorRangeItemType;
 begin
   if AString = 'SingleLine' then
     Result := ritSingleLineComment
@@ -1890,7 +1889,7 @@ var
   LRegionItem: TRegionItem;
   LSkipRegionArray: TJsonArray;
   LSkipRegionItem: TBCEditorCodeFolding.TSkipRegions.TItem;
-  LSkipRegionType: TItemType;
+  LSkipRegionType: TBCEditorRangeItemType;
 begin
   if ACodeFoldingObject.Contains('SkipRegion') then
   begin
@@ -2731,7 +2730,6 @@ begin
   begin
     LRegion := FCodeFoldingRegions[LIndex];
     LRegion.Free;
-    LRegion := nil;
   end;
   CodeFoldingRangeCount := 0;
   TCustomBCEditor(Editor).ClearMatchingPair;
