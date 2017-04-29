@@ -1669,7 +1669,10 @@ var
   StringBuilder: TStringBuilder;
 begin
   Assert((BOFPosition <= ABeginPosition) and (AEndPosition <= EOFPosition));
-  Assert(ABeginPosition <= AEndPosition);
+  Assert(ABeginPosition <= AEndPosition,
+    'ABeginPosition: ' + ABeginPosition.ToString() + #13#10
+    + 'AEndPosition: ' + AEndPosition.ToString());
+
   if (Count = 0) then
   begin
     Assert((ABeginPosition = BOFPosition) and (AEndPosition = BOFPosition));
@@ -1677,8 +1680,12 @@ begin
   end
   else
   begin
-    Assert(ABeginPosition.Char <= Length(Lines[ABeginPosition.Line].Text));
-    Assert(AEndPosition.Char <= Length(Lines[AEndPosition.Line].Text));
+    Assert(ABeginPosition.Char <= Length(Lines[ABeginPosition.Line].Text),
+      'ABeginPosition: ' + ABeginPosition.ToString() + #13#10
+      + 'Length: ' + IntToStr(Length(Lines[AEndPosition.Line].Text)));
+    Assert(AEndPosition.Char <= Length(Lines[AEndPosition.Line].Text),
+      'AEndPosition: ' + AEndPosition.ToString() + #13#10
+      + 'Length: ' + IntToStr(Length(Lines[AEndPosition.Line].Text)));
 
     LEndLine := AEndPosition.Line;
     if ((loTrimTrailingLines in Options) and (lsSaving in State)) then
@@ -1992,10 +1999,15 @@ begin
       else
       begin
         if (Count = 0) then
-          LPosition := BOFPosition
+        begin
+          LPosition := BOFPosition;
+          LText := '';
+        end
         else
+        begin
           LPosition := EOLPosition[Count - 1];
-        LText := '';
+          LText := LineBreak;
+        end;
         for LIndex := Count to APosition.Line - 1 do
           LText := LText + LineBreak;
         LText := LText + StringOfChar(BCEDITOR_SPACE_CHAR, APosition.Char);
